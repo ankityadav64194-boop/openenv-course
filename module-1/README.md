@@ -1,3 +1,38 @@
+from envs.openspiel_env import OpenSpielEnv
+from envs.openspiel_env.models import OpenSpielAction
+
+import random
+
+OPENSPIEL_URL = "https://openenv-openspiel-catch.hf.space"
+
+with OpenSpielEnv(base_url=OPENSPIEL_URL).sync() as env:
+
+    result = env.reset()
+    print("🎮 Game: Catch")
+    print("Legal actions:", result.observation.legal_actions)
+    print("State vector size:", len(result.observation.info_state))
+    print()
+
+    step = 0
+    while not result.done:
+        action_id = random.choice(result.observation.legal_actions)
+
+        action_name = {
+            0: "LEFT",
+            1: "STAY",
+            2: "RIGHT"
+        }[action_id]
+
+        result = env.step(OpenSpielAction(
+            action_id=action_id,
+            game_name="catch"
+        ))
+
+        step += 1
+        print(f"Step {step}: {action_name} → reward={result.reward}, done={result.done}")
+
+    print("\n🏁 Final reward:", result.reward)
+    print("📊 Final state:", env.state())
 # Module 1: Why OpenEnv? From Cartpole to Production RL
 
 ## The RL Loop in 60 Seconds
